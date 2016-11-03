@@ -16,8 +16,7 @@ app.listen(8080, () => {
 
 app.get('/', (req, res) => {
 	res.sendfile('index.html');
-	/*
-    homeController.queryEx(req.query)
+	/*homeController.queryEx(req.query)
     .then(data => { res.json(data); })
     .catch(error => { res.send(error); });
     */

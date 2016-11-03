@@ -4,6 +4,7 @@ module.exports = {
 
 	test: data => {
 		console.log('params in url', data);
+		//
 	},
 	queryEx: (data) => {
 		console.log('params in query for GET request', data);

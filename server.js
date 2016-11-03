@@ -2,10 +2,11 @@ var express = require('express');
 
 var bodyParser = require('body-parser');
 
-// create application/x-www-form-urlencoded parser 
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
-
 var app = express();
+
+//app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.static('public'));
 
 var homeController = require('./controllers/home');
 
@@ -14,17 +15,19 @@ app.listen(8080, () => {
 });
 
 app.get('/', (req, res) => {
-	res.set('Access-Control-Allow-Origin', '*');
+	res.sendfile('index.html');
+	/*
     homeController.queryEx(req.query)
     .then(data => { res.json(data); })
-    .catch((error) => { res.send(error); });
+    .catch(error => { res.send(error); });
+    */
 });
 
-app.post('/location', urlencodedParser, (req, res) => {
-	res.set('Access-Control-Allow-Origin', '*');
-	homeController.getMyLocation(req.body)
+app.post('/location', (req, res) => {
+	//res.set('Access-Control-Allow-Origin', '*');
+	homeController.findByLocation(req.body)
 	.then(data => { res.json(data); })
-	.catch((error) => { res.send(error); });
+	.catch(error => { res.send(error); });
 });
 
 app.get('/test/:id', (req, res) => {
@@ -32,7 +35,8 @@ app.get('/test/:id', (req, res) => {
     res.send('ololo');
 });
 
-app.post('/test1', urlencodedParser, (req, res) => {
-    homeController.postEx(req.body);
-    res.json({ a: 'ololo' });
+app.post('/find', (req, res) => {
+	homeController.findByName(req.body)
+	.then(data => { res.send(data); })
+	.catch(error => { res.send(error); });
 });

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<!--<link rel="stylesheet" type="text/css" href="style.css">-->
+</head>
+<body>
+	<h1>PropertyCross</h1>
+
+	<div class="container">
+       <div class="row">
+           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est voluptatum fugiat quisquam fuga voluptas, voluptatibus in iste culpa soluta quae!
+       </div>
+       <div class="serch-form">
+       <!--action="http://localhost:8080/find" method="post" enctype='application/json'-->
+           <form onsubmit="send(this);" method="" target="result" action="">
+               <input type="text" name="name" id="name"><br>
+               <button type="submit">Go</button>
+               <button id="btn-get-location" type="button">My location</button>
+           </form>
+           <div id="result"></div>
+           <iframe name="result" width="0" height="0" frameborder="0"></iframe>
+       </div>
+   </div>
+
+   <br>
+    <script>
+        var btn_get_loc = document.getElementById('btn-get-location');
+        btn_get_loc.addEventListener("click", function(){
+            
+            var http_loc = new XMLHttpRequest();
+            var point = prompt('Enter [Center Lat and Center Long]');
+            http_loc.open('POST', 'http://localhost:8080/location', true);
+            http_loc.setRequestHeader("Content-type", "application/json");
+            http_loc.onreadystatechange = () => {
+                if(http_loc.readyState == 4 && http_loc.status == 200) {
+                    //alert(http_loc.responseText);
+        			//var result = document.getElementById('result');
+        			//result.innerHTML = JSON.parse(http_loc.responseText);
+        			showList(JSON.parse(http_loc.responseText));
+                }
+            }
+            //console.log(JSON.stringify({centre_point: point}));
+            http_loc.send(JSON.stringify({centre_point: point}));
+        });
+
+        function send(form) {
+        	var http = new XMLHttpRequest();
+        	http.open('POST', 'http://localhost:8080/find', true);
+        	http.setRequestHeader('Content-type', 'application/json');
+        	http.onreadystatechange = () => {
+        		if (http.readyState == 4 && http.status == 200) {
+        			//alert(http.responseText);
+        			//var result = document.getElementById('result');
+        			//result.innerHTML = JSON.parse(http.responseText);
+        			showList(JSON.parse(http.responseText));
+        		}
+        	}
+        	console.log(JSON.stringify({name: form.name.value}));
+        	http.send(JSON.stringify({name: form.name.value,}));
+        };
+
+        function showList(array) {
+        	var result = document.getElementById('result');
+        	result.innerHTML = "";
+        	for (var i = 0; i < array.length; i++) {
+        		console.log(array[i]);
+        		result.innerHTML += "<div class='row'>"
+	            				+ "    <a href="+array[i].lister_url+">"
+	            				+ "        <img src="+array[i].img_url+"><br/>"
+	            				+ "        <label>"+array[i].lister_name+"</label><br/>"
+	            				+ "        <label>"+array[i].price_formatted+"</label><br/>"
+	            				+ "        <label>"+array[i].title+"</label><br/>"
+	            				+ "        <label>"+array[i].latitude+"</label>,<label>"+array[i].longitude+"</label>"
+	            				+ "	</a>"
+	            				+ "	<div class='devider'><hr></div>"
+								+ "</div>";
+        	};
+        };
+
+    </script>
+</body>
+</html>
+<!-- 51.684183,-3.431481 -->

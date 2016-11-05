@@ -1,14 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Document</title>
-	<!--<link rel="stylesheet" type="text/css" href="style.css">-->
-</head>
-<body>
-	<h1>PropertyCross</h1>
+  <h1>PropertyCross</h1>
+  <h3>Вы вошли как: <span id="login"></span> <a href="http://localhost:8080/login">Change user</a> <a href="http://localhost:8080/logout">Exit</a></h3>
 
-	<div class="container">
+  <div class="container">
        <div class="row">
            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Est voluptatum fugiat quisquam fuga voluptas, voluptatibus in iste culpa soluta quae!
        </div>
@@ -26,6 +19,13 @@
 
    <br>
     <script>
+        if (!navigator.cookieEnabled) {
+          alert( 'Включите cookie для комфортной работы с этим сайтом' );
+        }
+
+        var body_login = document.getElementById('login');
+          body_login.innerHTML = getCookie('login');
+
         var btn_get_loc = document.getElementById('btn-get-location');
         btn_get_loc.addEventListener("click", function(){
             
@@ -36,9 +36,9 @@
             http_loc.onreadystatechange = () => {
                 if(http_loc.readyState == 4 && http_loc.status == 200) {
                     //alert(http_loc.responseText);
-        			//var result = document.getElementById('result');
-        			//result.innerHTML = JSON.parse(http_loc.responseText);
-        			showList(JSON.parse(http_loc.responseText));
+              //var result = document.getElementById('result');
+              //result.innerHTML = JSON.parse(http_loc.responseText);
+              showList(JSON.parse(http_loc.responseText));
                 }
             }
             //console.log(JSON.stringify({centre_point: point}));
@@ -46,39 +46,49 @@
         });
 
         function send(form) {
-        	var http = new XMLHttpRequest();
-        	http.open('POST', 'http://localhost:8080/find', true);
-        	http.setRequestHeader('Content-type', 'application/json');
-        	http.onreadystatechange = () => {
-        		if (http.readyState == 4 && http.status == 200) {
-        			//alert(http.responseText);
-        			//var result = document.getElementById('result');
-        			//result.innerHTML = JSON.parse(http.responseText);
-        			showList(JSON.parse(http.responseText));
-        		}
-        	}
-        	console.log(JSON.stringify({name: form.name.value}));
-        	http.send(JSON.stringify({name: form.name.value,}));
+          var http = new XMLHttpRequest();
+          http.open('POST', 'http://localhost:8080/find', true);
+          http.setRequestHeader('Content-type', 'application/json');
+          http.onreadystatechange = () => {
+            if (http.readyState == 4 && http.status == 200) {
+              //alert(http.responseText);
+              //var result = document.getElementById('result');
+              //result.innerHTML = JSON.parse(http.responseText);
+              showList(JSON.parse(http.responseText));
+            }
+          }
+          console.log(JSON.stringify({name: form.name.value}));
+          http.send(JSON.stringify({name: form.name.value,}));
         };
 
         function showList(array) {
-        	var result = document.getElementById('result');
-        	result.innerHTML = "";
-        	for (var i = 0; i < array.length; i++) {
-        		result.innerHTML += "<div class='row'>"
-	            				+ "    <a href="+array[i].lister_url+">"
-	            				+ "        <img src="+array[i].img_url+"><br/>"
-	            				+ "        <label>"+array[i].lister_name+"</label><br/>"
-	            				+ "        <label>"+array[i].price_formatted+"</label><br/>"
-	            				+ "        <label>"+array[i].title+"</label><br/>"
-	            				+ "        <label>"+array[i].latitude+"</label>,<label>"+array[i].longitude+"</label>"
-	            				+ "	</a>"
-	            				+ "	<div class='devider'><hr></div>"
-								+ "</div>";
-        	};
+          var result = document.getElementById('result');
+          result.innerHTML = "";
+          for (var i = 0; i < array.length; i++) {
+            result.innerHTML += "<div class='r  ow'>"
+                      + "    <a href="+array[i].lister_url+">"
+                      + "        <img src="+array[i].img_url+"><br/>"
+                      + "        <label>"+array[i].lister_name+"</label><br/>"
+                      + "        <label>"+array[i].price_formatted+"</label><br/>"
+                      + "        <label>"+array[i].title+"</label><br/>"
+                      + "        <label>"+array[i].latitude+"</label>,<label>"+array[i].longitude+"</label>"
+                      + " </a>"
+                      + " <div class='devider'><hr></div>"
+                + "</div>";
+          };
         };
-
+        
+        function $_GET(key) {
+          var s = window.location.search;
+          s = s.match(new RegExp(key + '=([^&=]+)'));
+          return s ? s[1] : false;
+        }
+        // возвращает cookie с именем name, если есть, если нет, то undefined
+        function getCookie(name) {
+          var matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+          ));
+          return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
     </script>
-</body>
-</html>
 <!-- 51.684183,-3.431481 -->

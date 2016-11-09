@@ -1,10 +1,10 @@
 var request = require('superagent');
 
 var userSrvc = require('../services/user');
-var userService = new userSrvc();
+var userService;
 
 var HomeCtrl = function(db) {
-
+	userService = new userSrvc(db);
 	return {
 		findByLocation: data => {
 			console.log("params in query for GET request 'location'", data);

@@ -1,6 +1,6 @@
-var User = function() {
+var User = function(db) {
 	return {
-		isExist: (data, db) => {
+		isExist: (data) => {
 			//
 			return new Promise(function(resolve, reject) {
 				var user = db.collection('users').find({

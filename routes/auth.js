@@ -34,7 +34,10 @@ module.exports = (app) => {
 
 	app.get('/auth/facebook',
 		passport.authenticate('facebook', {
-			scope: 'read_stream'
+			scope: [
+				'email',
+				'public_profile'
+			]
 		})
 	);
 

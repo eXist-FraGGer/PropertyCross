@@ -1,7 +1,7 @@
 var ids = {
   facebook: {
-    clientID: 'get_your_own',
-    clientSecret: 'get_your_own',
+    clientID: '1777030542535874',
+    clientSecret: '5a244c58c60a0f2236497aa728e46b6e',
     callbackURL: 'http://localhost:8080/auth/facebook/callback'
   },
   twitter: {

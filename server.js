@@ -4,7 +4,8 @@ var express = require('express'),
 	redisStore = require('connect-redis')(session),
 	passport = require('passport'),
 	config = require('./oauth.js'),
-	AuthGoogleStrategy = require('passport-google-oauth2').Strategy,
+	AuthFacebookStrategy = require('passport-facebook');
+AuthGoogleStrategy = require('passport-google-oauth2').Strategy,
 	AuthLocalStrategy = require('passport-local').Strategy,
 	bodyParser = require('body-parser'),
 	MongoClient = require('mongodb').MongoClient;
@@ -29,6 +30,20 @@ passport.use('google', new AuthGoogleStrategy({
 		passReqToCallback: true
 	},
 	function(request, accessToken, refreshToken, profile, done) {
+		process.nextTick(function() {
+			return done(null, profile);
+		});
+	}
+));
+passport.use('facebook', new AuthFacebookStrategy({
+		clientID: config.facebook.clientID,
+		clientSecret: config.facebook.clientSecret,
+		callbackURL: config.facebook.callbackURL,
+		profileFields: [
+			'id', 'name', 'displayName', 'age_range', 'link', 'gender', 'locale', 'picture', 'timezone', 'updated_time', 'verified'
+		]
+	},
+	function(accessToken, refreshToken, profile, done) {
 		process.nextTick(function() {
 			return done(null, profile);
 		});

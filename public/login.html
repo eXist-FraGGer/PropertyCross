@@ -13,6 +13,7 @@
 		<button type="submit">Sign in</button>
 		<button id="btn_sign_up" type="button">Sign UP</button>		<p>
 		    <a href="/auth/google" role="button">Sign in with Google</a>
+		    <a href="/auth/facebook" role="button">Sign in with Facebook</a>
 		  </p>
 	</form>
 	<!--<div id="result2"></div>-->
@@ -28,6 +29,7 @@
 			    	//var result = document.getElementById('result2');
 			        //result.innerHTML = http.responseText;
 			        var redirect = JSON.parse(http.responseText).redirect;
+			        console.log(redirect);
 			        if (redirect) {
 			        	//console.log(redirect);
 			        	document.location = redirect;

@@ -81,6 +81,7 @@ app.listen(8080, () => {
 	})
 });
 
+require('./routes/auth.js')(app);
 
 
 app.get('/', ensureAuthenticated, (req, res) => {
@@ -115,37 +116,6 @@ app.post('/find', (req, res) => {
 			res.send(error);
 		});
 });
-
-app.post('/login',
-	passport.authenticate('local', {
-		failureRedirect: '/login'
-	}),
-	function(req, res) {
-		req.session.login = req.user.username;
-		res.send({
-			redirect: '/'
-		});
-	}
-);
-
-app.get('/auth/google',
-	passport.authenticate('google', {
-		scope: [
-			'https://www.googleapis.com/auth/plus.login',
-			'https://www.googleapis.com/auth/plus.profile.emails.read'
-		]
-	})
-);
-
-app.get('/auth/google/callback',
-	passport.authenticate('google', {
-		failureRedirect: '/'
-	}),
-	function(req, res) {
-		req.session.login = req.user.displayName;
-		res.redirect('/');
-	}
-);
 
 /*app.post('/reg', passport.authenticate('local-signup', {
 	successRedirect: '/',

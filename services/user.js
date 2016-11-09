@@ -1,6 +1,7 @@
 var User = function() {
 	return {
 		isExist: (data, db) => {
+			//
 			return new Promise(function(resolve, reject) {
 				var user = db.collection('users').find({
 					"username": data.username,

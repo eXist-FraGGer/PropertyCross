@@ -2,16 +2,18 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Document</title>
+	<title>Log in</title>
 </head>
 <body>
-	<form target="result2" action="" method="" onsubmit="signin(this);">
-		<label for="login"></label>
-		<input type="text" name="login">
+	<form target="result2" action="" method="" onsubmit="signin(this)">
+		<label for="username"></label>
+		<input type="text" name="username">
 		<label for="password"></label>
 		<input type="text" name="password">
 		<button type="submit">Sign in</button>
-		<button type="button">Sign UP</button>
+		<button id="btn_sign_up" type="button">Sign UP</button>		<p>
+		    <a href="/auth/google" role="button">Sign in with Google</a>
+		  </p>
 	</form>
 	<!--<div id="result2"></div>-->
 	<iframe name="result2" width="0" height="0" frameborder="0"></iframe>
@@ -32,8 +34,8 @@
 			        }
 	    		}
 	    	}
-	    	console.log(JSON.stringify({login: form.login.value, password: form.password.value}));
-	    	http.send(JSON.stringify({login: form.login.value, password: form.password.value}));
+	    	console.log(JSON.stringify({username: form.username.value, password: form.password.value}));
+	    	http.send(JSON.stringify({username: form.username.value, password: form.password.value}));
 		}
 	</script>
 </body>

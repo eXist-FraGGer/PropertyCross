@@ -23,12 +23,14 @@
           alert( 'Включите cookie для комфортной работы с этим сайтом' );
         }
 
+        var msg = getCookie('msg');
+        if (msg) alert(msg);
+
         var body_login = document.getElementById('login');
-          body_login.innerHTML = getCookie('login');
+          body_login.innerHTML = '<a href="/profile">' + getCookie('login') + '</a>';
 
         var btn_get_loc = document.getElementById('btn-get-location');
         btn_get_loc.addEventListener("click", function(){
-            
             var http_loc = new XMLHttpRequest();
             var point = prompt('Enter [Center Lat and Center Long]');
             http_loc.open('POST', 'http://localhost:8080/location', true);
@@ -51,9 +53,6 @@
           http.setRequestHeader('Content-type', 'application/json');
           http.onreadystatechange = () => {
             if (http.readyState == 4 && http.status == 200) {
-              //alert(http.responseText);
-              //var result = document.getElementById('result');
-              //result.innerHTML = JSON.parse(http.responseText);
               showList(JSON.parse(http.responseText));
             }
           }
@@ -65,7 +64,7 @@
           var result = document.getElementById('result');
           result.innerHTML = "";
           for (var i = 0; i < array.length; i++) {
-            result.innerHTML += "<div class='r  ow'>"
+            result.innerHTML += "<div class='row'>"
                       + "    <a href="+array[i].lister_url+">"
                       + "        <img src="+array[i].img_url+"><br/>"
                       + "        <label>"+array[i].lister_name+"</label><br/>"

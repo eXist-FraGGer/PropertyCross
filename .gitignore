@@ -3,3 +3,5 @@ models
 boot
 routes/express.js
 routes/index.js
+public/img
+uploads

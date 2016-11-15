@@ -27,7 +27,8 @@ module.exports = (app) => {
 			failureRedirect: '/'
 		}),
 		function(req, res) {
-			req.session.login = req.user.displayName;
+			//console.log(req.user);
+			req.session.login = req.user.username;
 			res.status(200).redirect('/');
 		}
 	);
@@ -46,7 +47,7 @@ module.exports = (app) => {
 			failureRedirect: '/'
 		}),
 		function(req, res) {
-			req.session.login = req.user.displayName;
+			req.session.login = req.user.username;
 			res.status(200).redirect('/');
 		}
 	);

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Profile</title>
+</head>
+<body>
+  <a href="/" role="button">Home</a>
+  <div id="profile_info">Добро пожаловать: </div>
+	<!--<a href="" target="_blank" id="avatar_url"></a>-->
+  <img src="" alt="avatar" id="avatar" width="250px">
+  <form action="/profile/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="image">
+    <button type="submit" value="Upload">Upload avatar</button>
+  </form>
+   <h3>Подключенные аккаунты</h3> 
+    <div id="acc_google">
+        <a href="/auth/google" role="button">Add Google</a>
+    </div>
+    <div id="acc_facebook">
+        <a href="/auth/facebook" role="button">Add Facebook</a>
+    </div>
+
+	<script>
+        if (!navigator.cookieEnabled) {
+          alert( 'Включите cookie для комфортной работы с этим сайтом' );
+        }
+        var user = JSON.parse(getCookie('user'));
+        console.log(user);
+
+        var profile_info = document.getElementById('profile_info');
+        profile_info.innerHTML += "<strong>" + user.username + "</strong>";
+        var avatar = document.getElementById('avatar');
+        avatar.src = './img/' + user.image;
+
+        // возвращает cookie с именем name, если есть, если нет, то undefined
+        function getCookie(name) {
+          var matches = document.cookie.match(new RegExp(
+            "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+          ));
+          return matches ? decodeURIComponent(matches[1]) : undefined;
+        };
+
+        if (user.accounts[0].google)
+          document.getElementById('acc_google').innerHTML = '<strong>Google: ' + user.accounts[0].google + '</strong>';
+        else if (user.accounts[1].google) 
+          document.getElementById('acc_google').innerHTML ='<strong>Google: ' +  user.accounts[1].google;
+
+        if (user.accounts[0].facebook)
+          document.getElementById('acc_facebook').innerHTML = '<strong>Facebook: ' + user.accounts[0].facebook + '</strong>';
+        else if (user.accounts[1].facebook) 
+          document.getElementById('acc_facebook').innerHTML = '<strong>Facebook: ' + user.accounts[1].facebook + '</strong>';
+
+        document.getElementById('addGoogleAcc').addEventListener('click', function() {
+            var http = new XMLHttpRequest();
+            http.open('POST', 'http://localhost:8080/addGoogleAcc', true);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.onreadystatechange = () => {
+              if (http.readyState == 4 && http.status == 200) {
+                alert(http.responseText);
+              }
+            }
+            http.send(JSON.stringify({username: form.username.value, password: form.password.value}));
+        });
+	</script>
+</body>
+</html>

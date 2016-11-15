@@ -5,18 +5,18 @@
 	<title>Log in</title>
 </head>
 <body>
-	<form target="result2" action="" method="" onsubmit="signin(this)">
+	<form id="login_form" target="result2" action="" method="" onsubmit="signin(this)">
 		<label for="username"></label>
 		<input type="text" name="username">
 		<label for="password"></label>
 		<input type="text" name="password">
 		<button type="submit">Sign in</button>
-		<button id="btn_sign_up" type="button">Sign UP</button>		<p>
+		<button id="btn_reg" type="button">Sign UP</button>		<p>
 		    <a href="/auth/google" role="button">Sign in with Google</a>
 		    <a href="/auth/facebook" role="button">Sign in with Facebook</a>
 		  </p>
 	</form>
-	<!--<div id="result2"></div>-->
+	<div id="message"></div>
 	<iframe name="result2" width="0" height="0" frameborder="0"></iframe>
 
 	<script>
@@ -38,6 +38,21 @@
 	    	console.log(JSON.stringify({username: form.username.value, password: form.password.value}));
 	    	http.send(JSON.stringify({username: form.username.value, password: form.password.value}));
 		}
+		var btn_reg = document.getElementById('btn_reg');
+		btn_reg.addEventListener('click', function() {
+			var form = document.getElementById('login_form');
+			var http = new XMLHttpRequest();
+			http.open('POST', 'http://localhost:8080/reg', true);
+			http.setRequestHeader('Content-type', 'application/json');
+			http.onreadystatechange = () => {
+				if (http.readyState == 4 && http.status == 200) {
+					alert(http.responseText);
+					//var message = document.getElementById('message');
+					//message.innerHTML =http.responseText;
+				}
+			}
+			http.send(JSON.stringify({username: form.username.value, password: form.password.value}));
+		})
 	</script>
 </body>
 </html>

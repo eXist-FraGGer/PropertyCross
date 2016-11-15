@@ -42,7 +42,55 @@ var HomeCtrl = function(db) {
 		},
 		login: data => {
 			console.log("params in body for POST request 'login'", data);
-			return userService.isExist(data, db);
+			return userService.getByNameAndPassword(data);
+		},
+		createProfile: data => {
+			return userService.create(data);
+		},
+		getUserById: id => {
+			return userService.getById(data);
+		},
+		getUserByName: name => {
+			return userService.getByName(name);
+		},
+		setAvatar: name => {
+			return userService.setImage(name);
+		},
+		loginWithGoogle: data => {
+			return new Promise(function(resolve, reject) {
+				userService.getByGoogle(data)
+					.then(user => {
+						if (user) {
+							resolve(user);
+						} else {
+							resolve(userService.create({
+								'username': data.emails[0].value,
+								'password': data.emails[0].value,
+								'google': data.id
+							}));
+						}
+					})
+					.catch(error => {
+						reject(error);
+					});
+			});
+			return userService.getByGoogle(data);
+		},
+		addGoogleAcc: data => {
+			console.log('addGoogleAcc', data);
+			return new Promise(function(resolve, reject) {
+				userService.isFreeGoogle(data.id)
+					.then(user => {
+						if (!user) {
+							resolve(userService.addGoogle(data));
+						} else {
+							reject('Google accaunt used!');
+						}
+					})
+					.catch(error => {
+						reject(error);
+					});
+			});
 		}
 	}
 }

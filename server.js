@@ -8,7 +8,12 @@ var express = require('express'),
 	AuthGoogleStrategy = require('passport-google-oauth2').Strategy,
 	AuthLocalStrategy = require('passport-local').Strategy,
 	bodyParser = require('body-parser'),
-	MongoClient = require('mongodb').MongoClient;
+	MongoClient = require('mongodb').MongoClient,
+	mongoose = require('mongoose'),
+	multer = require('multer'),
+	fs = require('fs');
+
+mongoose.connect('mongodb://localhost:27017/PropertyCross');
 
 var HomeCtrl = require('./controllers/home');
 var homeController;
@@ -31,7 +36,32 @@ passport.use('google', new AuthGoogleStrategy({
 	},
 	function(request, accessToken, refreshToken, profile, done) {
 		process.nextTick(function() {
-			return done(null, profile);
+			if (request.isAuthenticated()) {
+				console.log('add google acc');
+
+				homeController.addGoogleAcc({
+						'username': request.session.login,
+						'id': profile._json.id
+					}).then(data => {
+						return done(null, data);
+					})
+					.catch(data => {
+						request.user.msg = data;
+						return done(null, request.user);
+					});;
+			} else {
+				console.log('login with google');
+				homeController.loginWithGoogle(profile._json)
+					.then(data => {
+						//data.msg = 'Login & Password - your email: ' + profile._json.emails[0].value;
+						//console.log(data.msg);*/
+						//request.user.msg = msg;
+						return done(null, data);
+					})
+					.catch(data => {
+						return done(null, data);
+					});
+			}
 		});
 	}
 ));
@@ -57,9 +87,7 @@ passport.use('local', new AuthLocalStrategy(
 				password: password
 			})
 			.then(data => {
-				return done(null, {
-					username: "admin"
-				});
+				return done(null, data);
 			})
 			.catch(error => {
 				return done(null, false, {
@@ -70,7 +98,7 @@ passport.use('local', new AuthLocalStrategy(
 ));
 
 var app = express();
-//app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 // app.use(express.static(__dirname+'/public'));
 app.use(session({
@@ -84,6 +112,10 @@ app.use(session({
 	resave: false,
 	saveUninitialized: true
 }));
+
+app.use(multer({
+	dest: './uploads/'
+}).single('image'));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -100,7 +132,13 @@ require('./routes/auth.js')(app);
 
 
 app.get('/', ensureAuthenticated, (req, res) => {
+	console.log(req.user);
 	if (req.session.login) {
+		res.clearCookie('msg');
+		if (req.user.msg) {
+			res.cookie('msg', req.user.msg);
+			req.user.msg = undefined;
+		}
 		res.cookie('login', req.session.login);
 		res.sendFile(__dirname + '/public/index.html');
 		//res.location('http://example.com');
@@ -132,10 +170,50 @@ app.post('/find', (req, res) => {
 		});
 });
 
-/*app.post('/reg', passport.authenticate('local-signup', {
-	successRedirect: '/',
-	failureRedirect: '/login'
-}));*/
+app.get('/profile', ensureAuthenticated, (req, res) => {
+	homeController.getUserByName(req.user.username)
+		.then(data => {
+			res.cookie('user', JSON.stringify(data));
+			res.sendFile(__dirname + '/public/profile.html');
+		})
+		.catch(error => {
+			res.send(error);
+		});
+});
+
+app.get('/img/:name', (req, res) => {
+	res.sendFile(__dirname + '/public/img/' + req.params.name);
+});
+
+app.post('/profile/upload', function(req, res) {
+	if (req.file.mimetype.indexOf('image/') === 0) {
+		fs.readFile(req.file.path, function(error, result) {
+			var fName = __dirname + '/public/img/ava-' + req.user.username + '.jpg';
+			fs.writeFile(fName, result, function() {
+				homeController.setAvatar(req.user.username)
+					.then(data => {
+						console.log('avatar loaded');
+					})
+					.catch(error => {
+						console.log('Erro avatar loaded');
+					});
+			});
+		});
+
+	}
+	res.status(200).redirect('../profile');
+	//	res.end();
+});
+
+app.post('/reg', (req, res) => {
+	homeController.createProfile(req.body)
+		.then(data => {
+			res.send("Теперь можете войти");
+		})
+		.catch(error => {
+			res.send(error);
+		});
+});
 
 app.get('/logout', (req, res) => {
 	req.logout();
@@ -144,6 +222,10 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+	/*if (req.isAuthenticated()) {
+        res.redirect('/');
+    	return;
+    }*/
 	res.sendFile(__dirname + '/public/login.html');
 });
 

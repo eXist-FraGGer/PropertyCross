@@ -5,18 +5,18 @@ var UserSrvc = function(db) {
 		create: data => {
 			return new Promise(function(resolve, reject) {
 				var newUser = new User;
-				newUser.username = data.username;
-				newUser.password = data.password;
+				newUser.username = data.username || 'NewUser';
+				newUser.password = data.password || 'NewUser';
 				newUser.image = "";
 				newUser.accounts = [];
 				if (data.google) {
 					newUser.accounts.push({
-						'google': data.google
+						'google': data.google || ''
 					});
 				}
 				if (data.facebook) {
 					newUser.accounts.push({
-						'facebook': data.facebook
+						'facebook': data.facebook || ''
 					});
 				}
 				newUser.save(function(err, user) {
@@ -28,7 +28,7 @@ var UserSrvc = function(db) {
 		setImage: name => {
 			return new Promise(function(resolve, reject) {
 				User.update({
-					username: name
+					username: name || ''
 				}, {
 					image: 'ava-' + name + '.jpg'
 				}, function(err, user) {
@@ -40,7 +40,7 @@ var UserSrvc = function(db) {
 		getByName: name => {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
-						username: name
+						username: name || ''
 					},
 					function(err, user) {
 						if (err) reject(err);
@@ -51,7 +51,7 @@ var UserSrvc = function(db) {
 		getById: id => {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
-					_id: id
+					_id: id || ''
 				}, function(err, user) {
 					if (err) reject(err);
 					resolve(user);
@@ -61,8 +61,8 @@ var UserSrvc = function(db) {
 		getByNameAndPassword: (data) => {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
-					'username': data.username,
-					'password': data.password
+					'username': data.username || '',
+					'password': data.password || ''
 				}, function(err, user) {
 					if (err) reject(err);
 					resolve(user);
@@ -72,7 +72,7 @@ var UserSrvc = function(db) {
 		getByGoogle: data => {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
-					'accounts.google': data.id
+					'accounts.google': data.id || ''
 				}, function(err, user) {
 					if (err) reject(err);
 					resolve(user);
@@ -104,7 +104,7 @@ var UserSrvc = function(db) {
 		isFreeGoogle: data => {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
-					'accounts.google': data
+					'accounts.google': data || ''
 				}, function(err, user) {
 					if (err) reject(err);
 					resolve(user);
@@ -115,7 +115,7 @@ var UserSrvc = function(db) {
 		getByFacebook: data => {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
-					'accounts.facebook': data.id
+					'accounts.facebook': data.id || ''
 				}, function(err, user) {
 					if (err) reject(err);
 					resolve(user);
@@ -146,7 +146,7 @@ var UserSrvc = function(db) {
 		isFreeFacebook: data => {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
-					'accounts.facebook': data
+					'accounts.facebook': data || ''
 				}, function(err, user) {
 					if (err) reject(err);
 					resolve(user);

@@ -63,11 +63,15 @@ var HomeCtrl = function(db) {
 						if (user) {
 							resolve(user);
 						} else {
-							resolve(userService.create({
-								'username': data.emails[0].value,
-								'password': data.emails[0].value,
-								'google': data.id
-							}));
+							if (data.emails.length > 0 && data.id)
+								resolve(userService.create({
+									'username': data.emails[0].value,
+									'password': data.emails[0].value,
+									'google': data.id
+								}));
+							else {
+								reject('No corrected data');
+							}
 						}
 					})
 					.catch(error => {

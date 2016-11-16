@@ -40,28 +40,22 @@
           ));
           return matches ? decodeURIComponent(matches[1]) : undefined;
         };
-
-        if (user.accounts[0].google)
-          document.getElementById('acc_google').innerHTML = '<strong>Google: ' + user.accounts[0].google + '</strong>';
-        else if (user.accounts[1].google) 
-          document.getElementById('acc_google').innerHTML ='<strong>Google: ' +  user.accounts[1].google;
-
-        if (user.accounts[0].facebook)
-          document.getElementById('acc_facebook').innerHTML = '<strong>Facebook: ' + user.accounts[0].facebook + '</strong>';
-        else if (user.accounts[1].facebook) 
-          document.getElementById('acc_facebook').innerHTML = '<strong>Facebook: ' + user.accounts[1].facebook + '</strong>';
-
-        document.getElementById('addGoogleAcc').addEventListener('click', function() {
-            var http = new XMLHttpRequest();
-            http.open('POST', 'http://localhost:8080/addGoogleAcc', true);
-            http.setRequestHeader('Content-type', 'application/json');
-            http.onreadystatechange = () => {
-              if (http.readyState == 4 && http.status == 200) {
-                alert(http.responseText);
-              }
-            }
-            http.send(JSON.stringify({username: form.username.value, password: form.password.value}));
-        });
+        try {
+          if (user.accounts[0].google) 
+            document.getElementById('acc_google').innerHTML = '<strong>Google: ' + user.accounts[0].google + '</strong>';
+          else if (user.accounts[1].google) 
+            document.getElementById('acc_google').innerHTML ='<strong>Google: ' +  user.accounts[1].google;
+        } catch (e){
+          console.log('pff google');
+        }
+        try {
+          if (user.accounts[0].facebook) 
+            document.getElementById('acc_facebook').innerHTML = '<strong>Facebook: ' + user.accounts[0].facebook + '</strong>';
+          else if (user.accounts[1].facebook) 
+            document.getElementById('acc_facebook').innerHTML = '<strong>Facebook: ' + user.accounts[1].facebook + '</strong>';
+        } catch (e){
+          console.log('pff google');
+        }
 	</script>
 </body>
 </html>

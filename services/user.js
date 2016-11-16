@@ -14,6 +14,11 @@ var UserSrvc = function(db) {
 						'google': data.google
 					});
 				}
+				if (data.facebook) {
+					newUser.accounts.push({
+						'facebook': data.facebook
+					});
+				}
 				newUser.save(function(err, user) {
 					if (err) reject(err);
 					resolve(user);
@@ -100,6 +105,48 @@ var UserSrvc = function(db) {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
 					'accounts.google': data
+				}, function(err, user) {
+					if (err) reject(err);
+					resolve(user);
+				});
+			});
+		},
+
+		getByFacebook: data => {
+			return new Promise(function(resolve, reject) {
+				User.findOne({
+					'accounts.facebook': data.id
+				}, function(err, user) {
+					if (err) reject(err);
+					resolve(user);
+				});
+			});
+		},
+		addFacebook: data => {
+			console.log('UserSrvc addFacebook', data);
+			return new Promise(function(resolve, reject) {
+				User.findOne({
+					'username': data.username,
+					'accounts.facebook': '{$exists: false}'
+				}, function(err, user) {
+					if (err) reject(err);
+					if (!user) reject(user);
+					else {
+						user.accounts.push({
+							'facebook': data.id
+						});
+						user.save(function(err, user) {
+							if (err) reject(err);
+							resolve(user);
+						});
+					}
+				});
+			});
+		},
+		isFreeFacebook: data => {
+			return new Promise(function(resolve, reject) {
+				User.findOne({
+					'accounts.facebook': data
 				}, function(err, user) {
 					if (err) reject(err);
 					resolve(user);

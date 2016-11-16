@@ -74,7 +74,6 @@ var HomeCtrl = function(db) {
 						reject(error);
 					});
 			});
-			return userService.getByGoogle(data);
 		},
 		addGoogleAcc: data => {
 			console.log('addGoogleAcc', data);
@@ -85,6 +84,42 @@ var HomeCtrl = function(db) {
 							resolve(userService.addGoogle(data));
 						} else {
 							reject('Google accaunt used!');
+						}
+					})
+					.catch(error => {
+						reject(error);
+					});
+			});
+		},
+
+		loginWithFacebook: data => {
+			return new Promise(function(resolve, reject) {
+				userService.getByFacebook(data)
+					.then(user => {
+						if (user) {
+							resolve(user);
+						} else {
+							resolve(userService.create({
+								'username': data.last_name,
+								'password': data.last_name,
+								'facebook': data.id
+							}));
+						}
+					})
+					.catch(error => {
+						reject(error);
+					});
+			});
+		},
+		addFacebookAcc: data => {
+			console.log('addFacebookAcc', data);
+			return new Promise(function(resolve, reject) {
+				userService.isFreeFacebook(data.id)
+					.then(user => {
+						if (!user) {
+							resolve(userService.addFacebook(data));
+						} else {
+							reject('Facebook accaunt used!');
 						}
 					})
 					.catch(error => {

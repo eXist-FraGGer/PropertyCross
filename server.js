@@ -37,8 +37,6 @@ passport.use('google', new AuthGoogleStrategy({
 	function(request, accessToken, refreshToken, profile, done) {
 		process.nextTick(function() {
 			if (request.isAuthenticated()) {
-				console.log('add google acc');
-
 				homeController.addGoogleAcc({
 						'username': request.session.login,
 						'id': profile._json.id
@@ -47,15 +45,15 @@ passport.use('google', new AuthGoogleStrategy({
 					})
 					.catch(data => {
 						request.user.msg = data;
+						request.session.msg = data;
 						return done(null, request.user);
 					});;
 			} else {
-				console.log('login with google');
 				homeController.loginWithGoogle(profile._json)
 					.then(data => {
-						//data.msg = 'Login & Password - your email: ' + profile._json.emails[0].value;
-						//console.log(data.msg);*/
-						//request.user.msg = msg;
+						/*var msg = 'Login & Password - your email: ' + profile._json.emails[0].value;
+						//console.log(data.msg);
+						request.session.msg = msg;*/
 						return done(null, data);
 					})
 					.catch(data => {
@@ -75,7 +73,10 @@ passport.use('facebook', new AuthFacebookStrategy({
 	},
 	function(accessToken, refreshToken, profile, done) {
 		process.nextTick(function() {
-			return done(null, profile);
+			return done(null, {
+				profile: profile,
+				homeController: homeController
+			});
 		});
 	}
 ));
@@ -130,22 +131,17 @@ app.listen(8080, () => {
 
 require('./routes/auth.js')(app);
 
-
 app.get('/', ensureAuthenticated, (req, res) => {
-	console.log(req.user);
 	if (req.session.login) {
 		res.clearCookie('msg');
-		if (req.user.msg) {
-			res.cookie('msg', req.user.msg);
-			req.user.msg = undefined;
+		if (req.session.msg) {
+			res.cookie('msg', req.session.msg);
+			req.session.msg = undefined;
 		}
 		res.cookie('login', req.session.login);
 		res.sendFile(__dirname + '/public/index.html');
-		//res.location('http://example.com');
-		//res.status(200).redirect('./public/index.html');
 	} else {
 		res.sendFile(__dirname + '/public/login.html');
-		//res.status(200).redirect('/login');
 	}
 });
 
@@ -173,6 +169,7 @@ app.post('/find', (req, res) => {
 app.get('/profile', ensureAuthenticated, (req, res) => {
 	homeController.getUserByName(req.user.username)
 		.then(data => {
+			//console.log(data);
 			res.cookie('user', JSON.stringify(data));
 			res.sendFile(__dirname + '/public/profile.html');
 		})

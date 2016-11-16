@@ -27,7 +27,6 @@ module.exports = (app) => {
 			failureRedirect: '/'
 		}),
 		function(req, res) {
-			//console.log(req.user);
 			req.session.login = req.user.username;
 			res.status(200).redirect('/');
 		}
@@ -47,8 +46,40 @@ module.exports = (app) => {
 			failureRedirect: '/'
 		}),
 		function(req, res) {
-			req.session.login = req.user.username;
-			res.status(200).redirect('/');
+			if (req.session.login) {
+				req.user.homeController.addFacebookAcc({
+						'username': req.session.login,
+						'id': req.user.profile._json.id
+					}).then(data => {
+						req.session.passport.user = data;
+						req.session.login = data.username;
+						res.status(200).redirect('/');
+					})
+					.catch(msg => {
+						req.user.homeController.getUserByName(req.session.login)
+							.then(data => {
+								req.session.passport.user = data;
+								req.session.msg = msg;
+								req.session.login = data.username;
+								res.status(200).redirect('/');
+							})
+							.catch(error => {
+								res.send(error);
+							});
+					});;
+			} else {
+				req.user.homeController.loginWithFacebook(req.user.profile._json)
+					.then(data => {
+						req.session.passport.user = data;
+						req.session.login = data.username;
+						res.status(200).redirect('/');
+					})
+					.catch(data => {
+						req.session.passport.user = data;
+						req.session.login = data.username;
+						res.status(200).redirect('/');
+					});
+			}
 		}
 	);
 }

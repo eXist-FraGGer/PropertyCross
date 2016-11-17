@@ -32,6 +32,37 @@ var UserSrvc = function(db) {
 				});
 			});
 		},
+		change: data => {
+			return new Promise(function(resolve, reject) {
+				if (!data.username)
+					reject('No username');
+				else if (!data.oldpassword) {
+					reject('No old password');
+				} else {
+					if (data.new_password && (data.new_password !== data.again_new_password))
+						reject('No equals new password');
+					else
+						User.findOne({
+							'username': data.username
+						}, function(err, user) {
+							if (err) reject(err);
+							if (!user) reject('Not found user');
+							else {
+								console.log(user);
+								user.password = data.new_password;
+								if (data.email) {
+									user.email = data.email;
+									user.active = false;
+								}
+								user.save(function(err, user) {
+									if (err) reject(err);
+									resolve(user);
+								});
+							}
+						});
+				}
+			});
+		},
 		setImage: name => {
 			return new Promise(function(resolve, reject) {
 				User.update({
@@ -98,7 +129,6 @@ var UserSrvc = function(db) {
 					if (err) reject(err);
 					if (!user) reject(user);
 					else {
-						console.log(user);
 						user.accounts.push({
 							'google': data.id
 						});
@@ -171,7 +201,7 @@ var UserSrvc = function(db) {
 					},
 					function(err, user) {
 						if (err) reject(err);
-						if(!user) reject ('404: Not found user');
+						if (!user) reject('404: Not found user');
 						else resolve(user);
 					});
 			});

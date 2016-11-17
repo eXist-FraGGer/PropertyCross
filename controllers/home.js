@@ -136,6 +136,9 @@ var HomeCtrl = function(db) {
 		},
 		activatedAcc: data => {
 			return userService.activated(data);
+		},
+		changeProfile: data => {
+			return userService.change(data);
 		}
 	}
 }

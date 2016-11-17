@@ -1,0 +1,48 @@
+<a href="/" role="button">Home</a>
+<div id="profile_info">Редактирование пользователя: </div>
+<img src="" alt="avatar" id="avatar" width="250px">
+
+<form id="reg_form" target="result" action="" method="" onsubmit="edit(this)">
+	<p><input type="password" name="oldpassword" required placeholder="Old Password"></p>
+	<p><input type="password" name="new_password" required placeholder="New Password"></p>
+	<p><input type="password" name="again_new_password" required placeholder="New Password again"></p>
+	<p><input type="email" name="email" placeholder="Email"></p>
+	<button type="submit">Edit</button>
+</form>
+<iframe name="result" width="0" height="0" frameborder="0"></iframe>
+
+<script>
+	if (!navigator.cookieEnabled) {
+      alert('Включите cookie для комфортной работы с этим сайтом');
+    }
+    var user = JSON.parse(getCookie('user'));
+    console.log(user);
+
+    var profile_info = document.getElementById('profile_info');
+    profile_info.innerHTML += "<strong>" + user.username + "<br>e-mail: " + user.email + "</strong>";
+    var avatar = document.getElementById('avatar');
+    avatar.src = './img/' + user.image;
+
+	function edit(form) {
+		var http = new XMLHttpRequest();
+    	http.open('POST', 'http://localhost:8080/profileedit', true);
+    	http.setRequestHeader('Content-type', 'application/json');
+    	http.onreadystatechange = () => {
+    		if (http.readyState == 4 && http.status == 200) {
+		        var redirect = JSON.parse(http.responseText).redirect;
+		        if (redirect) {
+		        	document.location = redirect;
+		        }
+    		}
+    	}
+    	console.log(JSON.stringify({username: user.username, oldpassword: form.oldpassword.value, new_password: form.new_password.value, again_new_password: form.again_new_password.value, email: form.email.value}));
+    	http.send(JSON.stringify({username: user.username, oldpassword: form.oldpassword.value, new_password: form.new_password.value, again_new_password: form.again_new_password.value, email: form.email.value}));
+	};
+	// возвращает cookie с именем name, если есть, если нет, то undefined
+    function getCookie(name) {
+      var matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+      ));
+      return matches ? decodeURIComponent(matches[1]) : undefined;
+    };
+</script>

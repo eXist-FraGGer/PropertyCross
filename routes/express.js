@@ -90,6 +90,27 @@ module.exports = (app, homeController) => {
 			});
 	});
 
+	app.get('/profileedit', (req, res) => {
+		res.cookie('user', JSON.stringify(req.user));
+		res.sendFile(path.join(__dirname, '..', '/public/editProfile.html'));
+	});
+
+	app.post('/profileedit', (req, res) => {
+		homeController.changeProfile(req.body)
+			.then(data => {
+				console.log(data);
+				res.send({
+					redirect: '/profile'
+				});
+			})
+			.catch(error => {
+				console.log(error);
+				res.send({
+					redirect: '/profileedit'
+				});
+			});
+	});
+
 	app.get('/logout', (req, res) => {
 		req.logout();
 		req.session.login = "";

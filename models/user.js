@@ -10,7 +10,16 @@ var UserSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
+	email: {
+		type: String,
+		unique: true,
+		required: true
+	},
 	image: String,
+	active: {
+		type: Boolean,
+		default: false
+	},
 	accounts: [mongoose.Schema.Types.Mixed]
 });
 

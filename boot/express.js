@@ -6,7 +6,7 @@ var session = require('express-session'),
 	multer = require('multer');
 
 
-var client = redis.createClient();
+var clientSession = redis.createClient();
 
 module.exports = (app) => {
 	// app.use(bodyParser.urlencoded({ extended: false }));
@@ -17,7 +17,7 @@ module.exports = (app) => {
 		store: new redisStore({
 			host: 'localhost',
 			port: 6379,
-			client: client,
+			client: clientSession,
 			ttl: 260
 		}),
 		resave: false,

@@ -5,16 +5,18 @@
 	<title>Log in</title>
 </head>
 <body>
+  <a href="/" role="button">Home</a>
 	<form id="login_form" target="result2" action="" method="" onsubmit="signin(this)">
 		<label for="username"></label>
 		<input type="text" name="username">
 		<label for="password"></label>
 		<input type="text" name="password">
 		<button type="submit">Sign in</button>
-		<button id="btn_reg" type="button">Sign UP</button>		<p>
-		    <a href="/auth/google" role="button">Sign in with Google</a>
-		    <a href="/auth/facebook" role="button">Sign in with Facebook</a>
-		  </p>
+		<a href="/reg" role="button">Sign up</a>
+		<p>
+			<a href="/auth/google" role="button">Sign in with Google</a>
+			<a href="/auth/facebook" role="button">Sign in with Facebook</a>
+		</p>
 	</form>
 	<div id="message"></div>
 	<iframe name="result2" width="0" height="0" frameborder="0"></iframe>

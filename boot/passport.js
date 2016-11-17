@@ -54,7 +54,10 @@ module.exports = (homeController) => {
 			clientSecret: config.facebook.clientSecret,
 			callbackURL: config.facebook.callbackURL,
 			profileFields: [
-				'id', 'name', 'displayName', 'age_range', 'link', 'gender', 'locale', 'picture', 'timezone', 'updated_time', 'verified'
+				'id', 'name', 'displayName', 
+				'age_range', 'link', 'gender', 
+				'locale', 'picture', 'timezone', 
+				'updated_time', 'verified', 'email'
 			]
 		},
 		function(accessToken, refreshToken, profile, done) {

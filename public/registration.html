@@ -1,0 +1,26 @@
+<a href="/" role="button">Home</a>
+<form id="reg_form" target="result3" action="" method="" onsubmit="signup(this)">
+	<p><input type="text" name="username" required placeholder="User name"></p>
+	<p><input type="password" name="password" required placeholder="Password"></p>
+	<p><input type="email" name="email" required placeholder="Email"></p>
+	<button type="submit">Registration</button>
+</form>
+<iframe name="result3" width="0" height="0" frameborder="0"></iframe>
+
+<script>
+	function signup(form) {
+		var http = new XMLHttpRequest();
+    	http.open('POST', 'http://localhost:8080/reg', true);
+    	http.setRequestHeader('Content-type', 'application/json');
+    	http.onreadystatechange = () => {
+    		if (http.readyState == 4 && http.status == 200) {
+		        var redirect = JSON.parse(http.responseText).redirect;
+		        if (redirect) {
+		        	document.location = redirect;
+		        }
+    		}
+    	}
+    	console.log(JSON.stringify({username: form.username.value, password: form.password.value, email: form.email.value}));
+    	http.send(JSON.stringify({username: form.username.value, password: form.password.value, email: form.email.value}));
+	};
+</script>

@@ -23,15 +23,35 @@
 
 	<script>
         if (!navigator.cookieEnabled) {
-          alert( 'Включите cookie для комфортной работы с этим сайтом' );
+          alert('Включите cookie для комфортной работы с этим сайтом');
         }
         var user = JSON.parse(getCookie('user'));
         console.log(user);
 
         var profile_info = document.getElementById('profile_info');
-        profile_info.innerHTML += "<strong>" + user.username + "</strong>";
+        profile_info.innerHTML += "<strong>" + user.username + "<br>e-mail: " + user.email + "</strong>";
         var avatar = document.getElementById('avatar');
         avatar.src = './img/' + user.image;
+        if (user.active === false) {
+          profile_info.innerHTML += ' <input type="button" id="activated" style="color:green;" value="Подтвердить">';
+
+          document.getElementById('activated').addEventListener('click', function() {
+            console.log('verify');
+
+            var http = new XMLHttpRequest();
+            http.open('POST', 'http://localhost:8080/activated', true);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.onreadystatechange = () => {
+              if (http.readyState == 4 && http.status == 200)
+                alert(http.responseText);
+            };
+
+            http.send(JSON.stringify({
+              username: user.username,
+              email: user.email
+            }));
+          });
+        }
 
         // возвращает cookie с именем name, если есть, если нет, то undefined
         function getCookie(name) {
@@ -41,19 +61,19 @@
           return matches ? decodeURIComponent(matches[1]) : undefined;
         };
         try {
-          if (user.accounts[0].google) 
+          if (user.accounts[0].google)
             document.getElementById('acc_google').innerHTML = '<strong>Google: ' + user.accounts[0].google + '</strong>';
-          else if (user.accounts[1].google) 
-            document.getElementById('acc_google').innerHTML ='<strong>Google: ' +  user.accounts[1].google;
-        } catch (e){
+          else if (user.accounts[1].google)
+            document.getElementById('acc_google').innerHTML = '<strong>Google: ' + user.accounts[1].google;
+        } catch (e) {
           console.log('pff google');
         }
         try {
-          if (user.accounts[0].facebook) 
+          if (user.accounts[0].facebook)
             document.getElementById('acc_facebook').innerHTML = '<strong>Facebook: ' + user.accounts[0].facebook + '</strong>';
-          else if (user.accounts[1].facebook) 
+          else if (user.accounts[1].facebook)
             document.getElementById('acc_facebook').innerHTML = '<strong>Facebook: ' + user.accounts[1].facebook + '</strong>';
-        } catch (e){
+        } catch (e) {
           console.log('pff google');
         }
 	</script>

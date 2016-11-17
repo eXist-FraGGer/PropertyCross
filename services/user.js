@@ -4,10 +4,15 @@ var UserSrvc = function(db) {
 	return {
 		create: data => {
 			return new Promise(function(resolve, reject) {
+				if (!data.username || !data.password || !data.email) {
+					reject('No correct data');
+					return;
+				}
 				var newUser = new User;
-				newUser.username = data.username || 'NewUser';
-				newUser.password = data.password || 'NewUser';
+				newUser.username = data.username;
+				newUser.password = data.password;
 				newUser.image = "";
+				newUser.email = data.email;
 				newUser.accounts = [];
 				if (data.google) {
 					newUser.accounts.push({
@@ -19,7 +24,9 @@ var UserSrvc = function(db) {
 						'facebook': data.facebook || ''
 					});
 				}
+				newUser.active = false;
 				newUser.save(function(err, user) {
+					console.log(user);
 					if (err) reject(err);
 					resolve(user);
 				});
@@ -84,7 +91,9 @@ var UserSrvc = function(db) {
 			return new Promise(function(resolve, reject) {
 				User.findOne({
 					'username': data.username,
-					'accounts.google': '{$exists: false}'
+					'accounts.google': {
+						$exists: false
+					}
 				}, function(err, user) {
 					if (err) reject(err);
 					if (!user) reject(user);
@@ -151,6 +160,20 @@ var UserSrvc = function(db) {
 					if (err) reject(err);
 					resolve(user);
 				});
+			});
+		},
+		activated: data => {
+			return new Promise(function(resolve, reject) {
+				User.update({
+						'email': data
+					}, {
+						'active': true
+					},
+					function(err, user) {
+						if (err) reject(err);
+						if(!user) reject ('404: Not found user');
+						else resolve(user);
+					});
 			});
 		}
 	}

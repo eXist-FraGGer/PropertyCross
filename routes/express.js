@@ -1,6 +1,9 @@
 var path = require('path'),
 	fs = require('fs');
 
+var NodeMailerSrvc = require('../services/nodemailer');
+var mailer = new NodeMailerSrvc();
+
 module.exports = (app, homeController) => {
 	app.get('/', ensureAuthenticated, (req, res) => {
 		if (req.session.login) {
@@ -73,6 +76,10 @@ module.exports = (app, homeController) => {
 		//	res.end();
 	});
 
+	app.get('/reg', (req, res) => {
+		res.sendFile(path.join(__dirname, '..', '/public/registration.html'));
+	});
+
 	app.post('/reg', (req, res) => {
 		homeController.createProfile(req.body)
 			.then(data => {
@@ -95,6 +102,44 @@ module.exports = (app, homeController) => {
     	return;
     }*/
 		res.sendFile(path.join(__dirname, '..', '/public/login.html'));
+	});
+
+	app.post('/activated', (req, res) => {
+		if (!req.body.email)
+			res.end('Need email');
+		mailer.sendVerifyMsg({
+				to: req.body.email
+			})
+			.then(data => {
+				res.json({
+					data: data
+				})
+			})
+			.catch(error => {
+				res.json({
+					error: error
+				});
+			});
+	});
+
+	app.get('/activated/:token/:email', (req, res) => {
+		mailer.validateAccessToken(req.params.email, req.params.token)
+			.then(data => {
+				if (data)
+					homeController.activatedAcc(req.params.email)
+					.then(data => {
+						res.redirect('/profile');
+					})
+					.catch(error => {
+						req.session.msg = error;
+						res.redirect('/');
+					});
+			})
+			.catch(error => {
+				res.json({
+					error: error
+				});
+			});
 	});
 
 	// test authentication

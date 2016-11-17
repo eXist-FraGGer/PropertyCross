@@ -45,6 +45,7 @@ var HomeCtrl = function(db) {
 			return userService.getByNameAndPassword(data);
 		},
 		createProfile: data => {
+			console.log("params in body for POST request 'createProfile'", data);
 			return userService.create(data);
 		},
 		getUserById: id => {
@@ -67,6 +68,7 @@ var HomeCtrl = function(db) {
 								resolve(userService.create({
 									'username': data.emails[0].value,
 									'password': data.emails[0].value,
+									'email': data.emails[0].value,
 									'google': data.id
 								}));
 							else {
@@ -106,6 +108,7 @@ var HomeCtrl = function(db) {
 							resolve(userService.create({
 								'username': data.last_name,
 								'password': data.last_name,
+								'email': data.email,
 								'facebook': data.id
 							}));
 						}
@@ -130,6 +133,9 @@ var HomeCtrl = function(db) {
 						reject(error);
 					});
 			});
+		},
+		activatedAcc: data => {
+			return userService.activated(data);
 		}
 	}
 }
